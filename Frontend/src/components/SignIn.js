@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import "./sign-in.css"; // Import custom styles
 import "../styles/brand-colors.css"; // Import brand colors
+import logo from "../assets/Picasso Official logos-02.png"; // Import the logo
 
 const SignIn = ({ onSubmit, responseMessage, setResponseMessage, isLoading }) => {
   const [email, setEmail] = useState("");
@@ -36,6 +37,9 @@ const SignIn = ({ onSubmit, responseMessage, setResponseMessage, isLoading }) =>
   return (
     <main className="form-signin w-100 m-auto">
       <form onSubmit={handleSubmit} className="p-4 rounded shadow">
+        <div className="logo-container mb-4">
+          <img src={logo} alt="Picasso Design Agency Logo" className="img-fluid" />
+        </div>
         <h1 className="h3 mb-4 fw-bold text-center">Login</h1>
         
         <div className="form-floating mb-3">

@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "./navbar-fixed.css";
 import "../styles/brand-colors.css"; // Import brand colors
+import logo from "../assets/Picasso white.png"; // Import the logo
 
 function Navbar({ userName, userRole }) {
   const navigate = useNavigate();
@@ -36,8 +37,13 @@ function Navbar({ userName, userRole }) {
   return (
     <nav className="navbar navbar-expand-md fixed-top navbar-custom">
       <div className="container-fluid">
-        <Link className="navbar-brand" to="/">
-          Drive Mapper
+        <Link className="navbar-brand d-flex align-items-center" to="/">
+          <img
+            src={logo}
+            alt="Picasso Design Agency"
+            height="40"
+            className="d-inline-block align-top me-2"
+          />
         </Link>
         <button
           className="navbar-toggler"

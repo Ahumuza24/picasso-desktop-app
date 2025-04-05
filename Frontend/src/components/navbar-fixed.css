@@ -5,13 +5,25 @@ body {
 }
 
 .navbar-custom {
-  background-color: var(--brand-secondary);
+  padding: 0.5rem 1rem;
+  background-color: #000000;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .navbar-custom .navbar-brand {
   color: var(--brand-primary);
   font-weight: 600;
   font-size: 1.4rem;
+}
+
+.navbar-brand img {
+  max-height: 40px;
+  width: auto;
+  transition: transform 0.2s ease;
+}
+
+.navbar-brand img:hover {
+  transform: scale(1.05);
 }
 
 .navbar-custom .navbar-brand:hover {
