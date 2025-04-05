@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Admin Status</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 50px;
+        }
+        .debug-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        pre {
+            background-color: #f0f0f0;
+            padding: 15px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+        }
+        .error-details {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #ffe6e6;
+            border-left: 4px solid #ff0000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="debug-container">
+            <h2 class="mb-4">Debug Admin Status</h2>
+            
+            <div class="row mb-4">
+                <div class="col">
+                    <button id="checkStatus" class="btn btn-primary">Check Admin Status</button>
+                    <button id="testConnection" class="btn btn-secondary ms-2">Test Server Connection</button>
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <h4>Response:</h4>
+                <pre id="response">Click "Check Admin Status" to see the result.</pre>
+            </div>
+            
+            <div id="errorContainer" class="error-details d-none">
+                <h5>Detailed Error Information:</h5>
+                <div id="errorDetails"></div>
+            </div>
+            
+            <div class="alert alert-info">
+                <h5>Instructions:</h5>
+                <ol>
+                    <li>Make sure your backend server is running at http://localhost:8000</li>
+                    <li>Login to your account first in the main application</li>
+                    <li>Return to this page and click "Check Admin Status"</li>
+                    <li>The response will show if your current user is an admin</li>
+                    <li>If you get a "Failed to fetch" error, try the "Test Server Connection" button</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('checkStatus').addEventListener('click', async function() {
+            const responseElement = document.getElementById('response');
+            const errorContainer = document.getElementById('errorContainer');
+            const errorDetails = document.getElementById('errorDetails');
+            
+            responseElement.textContent = 'Loading...';
+            errorContainer.classList.add('d-none');
+            
+            try {
+                const response = await fetch('http://localhost:8000/api/debug/admin', {
+                    method: 'GET',
+                    credentials: 'include', // Important: Include cookies
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                responseElement.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                responseElement.textContent = 'Error: ' + error.message;
+                errorContainer.classList.remove('d-none');
+                errorDetails.innerHTML = `
+                    <p><strong>Error type:</strong> ${error.name}</p>
+                    <p><strong>Message:</strong> ${error.message}</p>
+                    <p><strong>This could be caused by:</strong></p>
+                    <ul>
+                        <li>Backend server not running (check if Go server is started)</li>
+                        <li>CORS issues (check server configuration)</li>
+                        <li>Network connectivity problems</li>
+                        <li>Firewall blocking the connection</li>
+                    </ul>
+                    <p><strong>Troubleshooting:</strong></p>
+                    <ul>
+                        <li>Make sure the server is running (cd Backend && go run main.go)</li>
+                        <li>Open http://localhost:8000 in your browser to check server status</li>
+                        <li>Check the server console for error messages</li>
+                    </ul>
+                `;
+            }
+        });
+
+        document.getElementById('testConnection').addEventListener('click', async function() {
+            const responseElement = document.getElementById('response');
+            const errorContainer = document.getElementById('errorContainer');
+            const errorDetails = document.getElementById('errorDetails');
+            
+            responseElement.textContent = 'Testing connection to server...';
+            errorContainer.classList.add('d-none');
+            
+            try {
+                const response = await fetch('http://localhost:8000/api/ping', {
+                    method: 'GET',
+                    mode: 'cors',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    responseElement.textContent = 'Connection successful! Server is running.\n\nServer response: ' + JSON.stringify(data, null, 2);
+                } else {
+                    responseElement.textContent = `Connection reached server but returned status: ${response.status}`;
+                }
+            } catch (error) {
+                responseElement.textContent = 'Server connection error: ' + error.message;
+                errorContainer.classList.remove('d-none');
+                errorDetails.innerHTML = `
+                    <p><strong>Error type:</strong> ${error.name}</p>
+                    <p><strong>Message:</strong> ${error.message}</p>
+                    <p><strong>This means the backend server is probably not running!</strong></p>
+                    <p>Open a terminal/command prompt and run:</p>
+                    <pre>cd Backend && go run main.go</pre>
+                `;
+            }
+        });
+    </script>
+</body>
+</html> 

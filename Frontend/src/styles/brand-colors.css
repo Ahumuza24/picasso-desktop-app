@@ -1,0 +1,101 @@
+:root {
+  --brand-primary: #E5B80B;     /* Mustard yellow */
+  --brand-primary-dark: #C69C09; /* Darker mustard for hover states */
+  --brand-primary-light: #F7D44C; /* Lighter mustard for backgrounds */
+  --brand-secondary: #212121;   /* Off-black */
+  --brand-secondary-light: #424242; /* Lighter black for hover states */
+  --brand-text-on-dark: #F5F5F5;  /* Light text for dark backgrounds */
+  --brand-text-on-light: #212121; /* Dark text for light backgrounds */
+  --brand-accent: #9E7C0A;      /* Accent color for highlights */
+  --brand-success: #4CAF50;     /* For success messages */
+  --brand-danger: #F44336;      /* For danger/error messages */
+  --brand-warning: #FF9800;     /* For warning messages */
+  --brand-info: #2196F3;        /* For info messages */
+}
+
+/* Override Bootstrap's primary button */
+.btn-primary {
+  background-color: var(--brand-primary) !important;
+  border-color: var(--brand-primary) !important;
+  color: var(--brand-secondary) !important;
+  font-weight: 500;
+}
+
+.btn-primary:hover {
+  background-color: var(--brand-primary-dark) !important;
+  border-color: var(--brand-primary-dark) !important;
+}
+
+/* Override navbar styling */
+.navbar-dark {
+  background-color: var(--brand-secondary) !important;
+}
+
+.dropdown-item:active {
+  background-color: var(--brand-primary) !important;
+  color: var(--brand-secondary) !important;
+}
+
+/* Form controls */
+.form-control:focus {
+  border-color: var(--brand-primary) !important;
+  box-shadow: 0 0 0 0.25rem rgba(229, 184, 11, 0.25) !important;
+}
+
+/* Links */
+a {
+  color: var(--brand-primary-dark);
+}
+
+a:hover {
+  color: var(--brand-accent);
+}
+
+/* Cards with brand styling */
+.card-header {
+  background-color: var(--brand-secondary) !important;
+  color: var(--brand-text-on-dark) !important;
+}
+
+/* Alert customization */
+.alert-success {
+  background-color: var(--brand-success);
+  color: white;
+}
+
+.alert-danger {
+  background-color: var(--brand-danger);
+  color: white;
+}
+
+/* Badges */
+.badge.bg-primary {
+  background-color: var(--brand-primary) !important;
+  color: var(--brand-secondary) !important;
+}
+
+.badge.bg-secondary {
+  background-color: var(--brand-secondary) !important;
+  color: var(--brand-text-on-dark) !important;
+}
+
+/* Custom button styles */
+.btn-outline-brand {
+  color: var(--brand-primary);
+  border-color: var(--brand-primary);
+}
+
+.btn-outline-brand:hover {
+  background-color: var(--brand-primary);
+  color: var(--brand-secondary);
+}
+
+/* Nav tabs */
+.nav-tabs .nav-link.active {
+  color: var(--brand-secondary);
+  border-bottom: 2px solid var(--brand-primary);
+}
+
+.nav-tabs .nav-link:hover {
+  color: var(--brand-primary-dark);
+} 
