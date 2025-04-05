@@ -87,40 +87,20 @@ const UserDashboard = ({ userName }) => {
                   <p className="lead mb-4">
                     We've detected your email domain is <strong>{domain}</strong>
                   </p>
-                  <p className="mb-4">Your Google Drive folder is ready for access.</p>
+                  <p className="mb-4">Your Brand Collateral is ready for access.</p>
                   <button
                     className="btn btn-primary btn-lg px-5 py-3"
                     onClick={handleOpenDrive}
                     disabled={!driveUrl}
                   >
-                    Open My Drive Folder
+                    Open My Folder
                   </button>
                 </>
               )}
             </div>
           </div>
 
-          <div className="card shadow">
-            <div className="card-header">
-              <h5 className="mb-0">Your Account</h5>
-            </div>
-            <div className="card-body">
-              <div className="d-grid gap-2">
-                <button
-                  className="btn btn-outline-primary"
-                  onClick={() => navigate("/profile")}
-                >
-                  Edit Profile
-                </button>
-                <button
-                  className="btn btn-outline-secondary"
-                  onClick={() => navigate("/change-password")}
-                >
-                  Change Password
-                </button>
-              </div>
-            </div>
-          </div>
+          
         </div>
       </div>
     </div>

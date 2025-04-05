@@ -36,7 +36,7 @@ const SignIn = ({ onSubmit, responseMessage, setResponseMessage, isLoading }) =>
   return (
     <main className="form-signin w-100 m-auto">
       <form onSubmit={handleSubmit} className="p-4 rounded shadow">
-        <h1 className="h3 mb-4 fw-bold text-center">Drive Mapper Login</h1>
+        <h1 className="h3 mb-4 fw-bold text-center">Login</h1>
         
         <div className="form-floating mb-3">
           <input
