@@ -8,6 +8,8 @@ type DomainMapping struct {
 	Description string `json:"description"`
 	IsActive    bool   `json:"is_active" gorm:"default:true"`
 	CreatedAt   int64  `json:"created_at"`
+	UpdatedAt   int64  `json:"updated_at"`
+	CreatedBy   uint   `json:"created_by,omitempty"`
 }
 
 // DefaultMapping represents the default/fallback mapping when a domain is not found

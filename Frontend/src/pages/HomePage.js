@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import UserDashboard from "../components/UserDashboard";
-import AdminDashboard from "../pages/AdminPage";
+import AdminDashboard from "../components/AdminDashboard";
 import "../styles/brand-colors.css"; // Import brand colors
 
 const HomePage = ({ userName, userRole }) => {

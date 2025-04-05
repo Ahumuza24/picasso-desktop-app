@@ -15,7 +15,7 @@ import (
 // GetDomainMappings returns all domain mappings (admin only)
 func GetDomainMappings(c *fiber.Ctx) error {
 	// Check if user is admin
-	if (!utils.IsAdmin(c)) {
+	if !utils.IsAdmin(c) {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"error": "Unauthorized access",
 		})
@@ -34,7 +34,7 @@ func GetDomainMappings(c *fiber.Ctx) error {
 // GetDefaultMapping returns the default folder mapping
 func GetDefaultMapping(c *fiber.Ctx) error {
 	// Check if user is admin
-	if (!utils.IsAdmin(c)) {
+	if !utils.IsAdmin(c) {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"error": "Unauthorized access",
 		})
@@ -53,7 +53,7 @@ func GetDefaultMapping(c *fiber.Ctx) error {
 // CreateDomainMapping creates a new domain mapping
 func CreateDomainMapping(c *fiber.Ctx) error {
 	// Check if user is admin
-	if (!utils.IsAdmin(c)) {
+	if !utils.IsAdmin(c) {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"error": "Unauthorized access",
 		})
@@ -80,13 +80,19 @@ func CreateDomainMapping(c *fiber.Ctx) error {
 		})
 	}
 
+	// Get current user ID
+	userId := utils.GetUserIdFromToken(c)
+	currentTime := time.Now().Unix()
+
 	// Create the domain mapping
 	mapping := models.DomainMapping{
 		Domain:      data["domain"].(string),
 		DriveURL:    data["drive_url"].(string),
 		Description: data["description"].(string),
 		IsActive:    true,
-		CreatedAt:   time.Now().Unix(),
+		CreatedAt:   currentTime,
+		UpdatedAt:   currentTime,
+		CreatedBy:   userId,
 	}
 
 	if err := database.DB.Create(&mapping).Error; err != nil {
@@ -101,7 +107,7 @@ func CreateDomainMapping(c *fiber.Ctx) error {
 // UpdateDomainMapping updates an existing domain mapping
 func UpdateDomainMapping(c *fiber.Ctx) error {
 	// Check if user is admin
-	if (!utils.IsAdmin(c)) {
+	if !utils.IsAdmin(c) {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"error": "Unauthorized access",
 		})
@@ -156,7 +162,7 @@ func UpdateDomainMapping(c *fiber.Ctx) error {
 // DeleteDomainMapping deletes a domain mapping
 func DeleteDomainMapping(c *fiber.Ctx) error {
 	// Check if user is admin
-	if (!utils.IsAdmin(c)) {
+	if !utils.IsAdmin(c) {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"error": "Unauthorized access",
 		})
@@ -185,7 +191,7 @@ func DeleteDomainMapping(c *fiber.Ctx) error {
 // UpdateDefaultMapping updates the default mapping
 func UpdateDefaultMapping(c *fiber.Ctx) error {
 	// Check if user is admin
-	if (!utils.IsAdmin(c)) {
+	if !utils.IsAdmin(c) {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"error": "Unauthorized access",
 		})
