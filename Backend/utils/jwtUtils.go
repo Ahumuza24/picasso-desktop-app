@@ -10,7 +10,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-const SecretKey = "secret"
+const SecretKey = "X9dV7qLz82rTmJYA4pKW0sNMB1xfCuEeo6ihGZalW5cUOD3gBy"
 
 // GetUintFromClaims converts a claim to uint
 func GetUintFromClaims(claims *jwt.MapClaims, key string) uint {
