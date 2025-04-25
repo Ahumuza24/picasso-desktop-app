@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/brand-colors.css";
+import "./admin-dashboard.css";
 
 const AdminDashboard = ({ userName }) => {
   const [domains, setDomains] = useState([]);
@@ -36,7 +37,15 @@ const AdminDashboard = ({ userName }) => {
       }
     };
 
+    // Add a class to the body to fix scrolling issues
+    document.body.classList.add('admin-page');
+    
     fetchData();
+    
+    return () => {
+      // Cleanup - remove the class when component unmounts
+      document.body.classList.remove('admin-page');
+    };
   }, []);
 
   const fetchDomains = async () => {
@@ -214,7 +223,7 @@ const AdminDashboard = ({ userName }) => {
   }
 
   return (
-    <div className="container">
+    <div className="container admin-container">
       <h1 className="mb-4">Admin Dashboard</h1>
       
       {error && <div className="alert alert-danger">{error}</div>}

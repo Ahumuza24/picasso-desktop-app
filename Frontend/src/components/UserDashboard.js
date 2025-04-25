@@ -84,9 +84,7 @@ const UserDashboard = ({ userName }) => {
                 <div className="alert alert-danger">{error}</div>
               ) : (
                 <>
-                  <p className="lead mb-4">
-                    We've detected your email domain is <strong>{domain}</strong>
-                  </p>
+                  
                   <p className="mb-4">Your Brand Collateral is ready for access.</p>
                   <button
                     className="btn btn-primary btn-lg px-5 py-3"

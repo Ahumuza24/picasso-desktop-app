@@ -1,0 +1,39 @@
+/* Admin dashboard specific styles */
+.admin-container {
+  margin-top: 1rem;
+  margin-bottom: 3rem;
+  min-height: calc(100vh - 120px);
+  overflow-y: visible; /* Allow container to expand and enable scrolling */
+}
+
+/* Ensure tables can scroll horizontally on small screens */
+.table-responsive {
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+/* Ensure content doesn't get cut off */
+.card {
+  margin-bottom: 2rem;
+}
+
+/* Override any global settings that might prevent scrolling */
+html {
+  height: auto !important;
+  min-height: 100%;
+  overflow-y: scroll !important;
+}
+
+body {
+  height: auto !important;
+  min-height: 100vh;
+  overflow-y: scroll !important;
+  position: relative;
+
+}
+
+/* Ensure proper spacing for the admin content */
+.container {
+  padding-bottom: 3rem;
+  margin-top: 20    px;
+} 

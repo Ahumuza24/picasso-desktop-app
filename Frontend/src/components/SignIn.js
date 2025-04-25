@@ -1,6 +1,7 @@
 // SignIn.js
 
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import "./sign-in.css"; // Import custom styles
 import "../styles/brand-colors.css"; // Import brand colors
 import logo from "../assets/Picasso Official logos-02.png"; // Import the logo
@@ -90,6 +91,10 @@ const SignIn = ({ onSubmit, responseMessage, setResponseMessage, isLoading }) =>
             {responseMessage}
           </div>
         )}
+        
+        <div className="text-center mt-3">
+          <p>Don't have an account? <Link to="/register">Sign up</Link></p>
+        </div>
       </form>
     </main>
   );

@@ -1,12 +1,29 @@
 // src/pages/LoginPage.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import SignIn from "../components/SignIn";
 import { Navigate } from "react-router-dom";
+import "../styles/no-scroll.css"; // Import no-scroll styles
 
 const LoginPage = () => {
   const [responseMessage, setResponseMessage] = useState("");
   const [redirect, setRedirect] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    // Apply no-scroll classes
+    document.documentElement.classList.add('no-scroll');
+    document.body.classList.add('no-scroll');
+    document.getElementById('root').classList.add('no-scroll');
+    
+    // Cleanup function
+    return () => {
+      document.documentElement.classList.remove('no-scroll');
+      document.body.classList.remove('no-scroll');
+      if (document.getElementById('root')) {
+        document.getElementById('root').classList.remove('no-scroll');
+      }
+    };
+  }, []);
 
   const handleSubmit = async (userData) => {
     console.log("Submitting user data:", userData);
@@ -77,7 +94,7 @@ const LoginPage = () => {
   }
 
   return (
-    <div>
+    <div className="no-scroll-container">
       <SignIn
         onSubmit={handleSubmit}
         responseMessage={responseMessage}

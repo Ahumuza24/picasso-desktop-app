@@ -7,6 +7,24 @@ import logo from "../assets/Picasso white.png"; // Import the logo
 function Navbar({ userName, userRole }) {
   const navigate = useNavigate();
   
+  // If no userName, don't render the navbar at all
+  if (!userName) {
+    return null;
+  }
+  
+  // Get initials for avatar
+  const getInitials = (name) => {
+    if (!name) return "U";
+    return name
+      .split(" ")
+      .map(word => word[0])
+      .join("")
+      .toUpperCase()
+      .substring(0, 2);
+  };
+  
+  const userInitials = getInitials(userName);
+  
   const logout = async () => {
     try {
       const response = await fetch(`http://localhost:8000/api/logout`, {
@@ -33,6 +51,18 @@ function Navbar({ userName, userRole }) {
   };
 
   const isAdmin = userRole === "admin";
+  
+  // Generate a random pastel color based on username
+  const getAvatarColor = (name) => {
+    let hash = 0;
+    for (let i = 0; i < name.length; i++) {
+      hash = name.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    
+    // Generate pastel color
+    const h = hash % 360;
+    return `hsl(${h}, 70%, 80%)`;
+  };
 
   return (
     <nav className="navbar navbar-expand-md fixed-top navbar-custom">
@@ -58,69 +88,56 @@ function Navbar({ userName, userRole }) {
         </button>
         <div className="collapse navbar-collapse" id="navbarCollapse">
           <ul className="navbar-nav me-auto mb-2 mb-md-0">
-            <li className="nav-item">
-              <Link className="nav-link" to="/">
-                Home
-              </Link>
-            </li>
-            {isAdmin && (
-              <li className="nav-item">
-                <Link className="nav-link" to="/admin">
-                  Admin Panel
-                </Link>
-              </li>
-            )}
+            {/* Home and Admin Panel links removed */}
           </ul>
           <ul className="navbar-nav">
-            {userName ? (
-              <>
-                <li className="nav-item dropdown">
-                  <a
-                    className="nav-link dropdown-toggle"
-                    href="#"
-                    id="navbarDropdown"
-                    role="button"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                  >
-                    Welcome, {userName}
+            <li className="nav-item dropdown">
+              <a
+                className="nav-link dropdown-toggle d-flex align-items-center"
+                href="#"
+                id="navbarDropdown"
+                role="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                <div 
+                  className="rounded-circle d-flex align-items-center justify-content-center"
+                  style={{ 
+                    width: "40px", 
+                    height: "40px", 
+                    backgroundColor: getAvatarColor(userName),
+                    color: "#333",
+                    fontWeight: "bold",
+                    fontSize: "16px"
+                  }}
+                >
+                  {userInitials}
+                </div>
+              </a>
+              <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                <li className="dropdown-header">
+                  {userName}
+                </li>
+                <li>
+                  <Link className="dropdown-item" to="/profile">
+                    My Profile
+                  </Link>
+                </li>
+                <li>
+                  <Link className="dropdown-item" to="/change-password">
+                    Change Password
+                  </Link>
+                </li>
+                <li>
+                  <hr className="dropdown-divider" />
+                </li>
+                <li>
+                  <a className="dropdown-item" href="#" onClick={logout}>
+                    Logout
                   </a>
-                  <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                    <li>
-                      <Link className="dropdown-item" to="/profile">
-                        My Profile
-                      </Link>
-                    </li>
-                    <li>
-                      <Link className="dropdown-item" to="/change-password">
-                        Change Password
-                      </Link>
-                    </li>
-                    <li>
-                      <hr className="dropdown-divider" />
-                    </li>
-                    <li>
-                      <a className="dropdown-item" href="#" onClick={logout}>
-                        Logout
-                      </a>
-                    </li>
-                  </ul>
                 </li>
-              </>
-            ) : (
-              <>
-                <li className="nav-item">
-                  <Link className="nav-link" to="/login">
-                    Login
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link className="nav-link" to="/register">
-                    Register
-                  </Link>
-                </li>
-              </>
-            )}
+              </ul>
+            </li>
           </ul>
         </div>
       </div>

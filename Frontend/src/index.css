@@ -1,10 +1,86 @@
+/* Global styles */
+html, body, #root {
+  height: 100%;
+}
+
 body {
   margin: 0;
+  padding: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-y: auto;
+  position: relative;
+}
+
+/* NO SCROLL styles - Applied to login, register and homepage */
+.no-scroll {
+  overflow: hidden !important;
+  position: fixed !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Specific styles for login/register pages */
+body.auth-page {
+  overflow: hidden !important;
+  height: 100vh !important;
+  position: fixed !important;
+  width: 100% !important;
+  touch-action: none !important;
+}
+
+/* Remove fixed positioning for the body when we're in admin sections */
+body.admin-page {
+  position: static;
+  height: auto;
+  min-height: 100%;
+}
+
+/* Fix fixed navbar issues */
+body.fixed-nav {
+  padding-top: 56px;
+}
+
+/* Reset any conflicting styles */
+.app-container {
+  height: auto;
+  min-height: 100%;
+}
+
+/* Ensure content is scrollable */
+.content-container {
+  min-height: 100%;
+  position: relative;
+}
+
+/* Remove overflow hidden that might be causing issues */
+.container, .container-fluid {
+  overflow: visible;
+}
+
+/* Make sure all content is visible with proper spacing */
+.main-content {
+  padding-bottom: 3rem;
+}
+
+/* Fix for tables in admin dashboard */
+.table-responsive {
+  overflow-x: auto;
+}
+
+/* Fix for modals and dropdown positioning */
+.dropdown-menu, .modal {
+  position: absolute;
+}
+
+/* Fix for scrolling when navbar is fixed */
+@media (min-width: 992px) {
+  body {
+    overflow-y: auto;
+  }
 }
 
 code {

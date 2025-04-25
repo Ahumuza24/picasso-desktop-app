@@ -1,6 +1,7 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "./sign-in.css"; // Import custom styles
+import "./sign-up.css"; // Import signup-specific styles
 import "../styles/brand-colors.css"; // Import brand colors
 import logo from "../assets/Picasso Official logos-02.png"; // Import the logo
 
@@ -64,7 +65,7 @@ const SignUp = ({ onSubmit, responseMessage, setResponseMessage, isLoading }) =>
   };
 
   return (
-    <main className="form-signin w-100 m-auto">
+    <main className="form-signup w-100 m-auto">
       <form onSubmit={handleSubmit} className="p-4 rounded shadow">
         <div className="logo-container mb-4">
           <img src={logo} alt="Picasso Design Agency Logo" className="img-fluid" />
@@ -154,6 +155,10 @@ const SignUp = ({ onSubmit, responseMessage, setResponseMessage, isLoading }) =>
             {responseMessage}
           </div>
         )}
+        
+        <div className="text-center mt-3">
+          <p>Already have an account? <Link to="/login">Sign in</Link></p>
+        </div>
       </form>
     </main>
   );
