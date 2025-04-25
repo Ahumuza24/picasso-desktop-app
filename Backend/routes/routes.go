@@ -24,6 +24,9 @@ func SetupRoutes(app *fiber.App) {
 
 	// Admin routes
 	app.Get("/api/admin/users", controllers.GetAllUsers)
+	app.Get("/api/admin/users/:id", controllers.GetUserByID)
+	app.Put("/api/admin/users/:id", controllers.UpdateUser)
+	app.Delete("/api/admin/users/:id", controllers.DeleteUser)
 	app.Get("/api/admin/domains", controllers.GetDomainMappings)
 	app.Post("/api/admin/domains", controllers.CreateDomainMapping)
 	app.Put("/api/admin/domains/:id", controllers.UpdateDomainMapping)

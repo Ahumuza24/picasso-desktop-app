@@ -7,6 +7,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/logger"
 )
 
 func main() {
@@ -18,7 +19,36 @@ func main() {
 	// Ensure database handle is set
 	database.DB = db
 
-	app := fiber.New()
+	app := fiber.New(fiber.Config{
+		ErrorHandler: func(c *fiber.Ctx, err error) error {
+			// Default error handling
+			code := fiber.StatusInternalServerError
+			message := "Internal Server Error"
+
+			// Check if it's a Fiber error
+			if e, ok := err.(*fiber.Error); ok {
+				code = e.Code
+				message = e.Message
+			} else {
+				message = err.Error()
+			}
+
+			// Set Content-Type to application/json
+			c.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
+
+			// Return JSON error response
+			return c.Status(code).JSON(fiber.Map{
+				"error": message,
+			})
+		},
+	})
+
+	// Add logger middleware
+	app.Use(logger.New(logger.Config{
+		Format:     "[${time}] ${status} - ${method} ${path} ${latency}\n",
+		TimeFormat: "15:04:05",
+		TimeZone:   "Local",
+	}))
 
 	// Configure CORS with specific origin
 	app.Use(cors.New(cors.Config{

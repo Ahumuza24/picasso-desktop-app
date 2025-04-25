@@ -18,6 +18,18 @@ const AdminDashboard = ({ userName }) => {
   const [newDescription, setNewDescription] = useState("");
   const [editDefaultDriveUrl, setEditDefaultDriveUrl] = useState("");
   
+  // User edit states
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingUser, setEditingUser] = useState(null);
+  const [editName, setEditName] = useState("");
+  const [editEmail, setEditEmail] = useState("");
+  const [editDepartment, setEditDepartment] = useState("");
+  const [editRole, setEditRole] = useState("");
+  
+  // Delete confirmation
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [userToDelete, setUserToDelete] = useState(null);
+  
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -212,6 +224,105 @@ const AdminDashboard = ({ userName }) => {
     }
   };
 
+  // Function to open edit user modal
+  const handleEditUser = (user) => {
+    setEditingUser(user);
+    setEditName(user.name);
+    setEditEmail(user.email);
+    setEditDepartment(user.department || "");
+    setEditRole(user.role || "user");
+    setShowEditModal(true);
+  };
+
+  // Function to save user changes
+  const handleSaveUser = async (e) => {
+    e.preventDefault();
+    
+    if (!editingUser) return;
+    
+    try {
+      setLoading(true);
+      const response = await fetch(`http://localhost:8000/api/admin/users/${editingUser.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          name: editName,
+          email: editEmail,
+          department: editDepartment,
+          role: editRole
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to update user");
+      }
+
+      // Refresh users
+      await fetchUsers();
+      setError("");
+      setShowEditModal(false);
+    } catch (err) {
+      console.error("Error updating user:", err);
+      setError(err.message || "Failed to update user");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Function to close modal
+  const handleCloseModal = () => {
+    setShowEditModal(false);
+    setEditingUser(null);
+  };
+  
+  // Function to show delete confirmation
+  const handleShowDeleteUser = (user) => {
+    setUserToDelete(user);
+    setShowDeleteConfirm(true);
+  };
+  
+  // Function to cancel delete
+  const handleCancelDelete = () => {
+    setShowDeleteConfirm(false);
+    setUserToDelete(null);
+  };
+  
+  // Function to confirm and delete user
+  const handleConfirmDeleteUser = async () => {
+    if (!userToDelete) return;
+    
+    try {
+      setLoading(true);
+      const response = await fetch(`http://localhost:8000/api/admin/users/${userToDelete.id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include"
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to delete user");
+      }
+
+      // Refresh users
+      await fetchUsers();
+      setError("");
+      setShowDeleteConfirm(false);
+      setUserToDelete(null);
+    } catch (err) {
+      console.error("Error deleting user:", err);
+      setError(err.message || "Failed to delete user");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (!userName) {
     return (
       <div className="container mt-5">
@@ -401,12 +512,13 @@ const AdminDashboard = ({ userName }) => {
                         <th>Email</th>
                         <th>Department</th>
                         <th>Role</th>
+                        <th>Actions</th>
                       </tr>
                     </thead>
                     <tbody>
                       {users.length === 0 ? (
                         <tr>
-                          <td colSpan="4" className="text-center">No users found</td>
+                          <td colSpan="5" className="text-center">No users found</td>
                         </tr>
                       ) : (
                         users.map((user) => (
@@ -419,6 +531,24 @@ const AdminDashboard = ({ userName }) => {
                                 {user.role}
                               </span>
                             </td>
+                            <td>
+                              <div className="btn-group" role="group">
+                                <button
+                                  className="btn btn-sm btn-info me-2"
+                                  onClick={() => handleEditUser(user)}
+                                  disabled={loading}
+                                >
+                                  Edit
+                                </button>
+                                <button
+                                  className="btn btn-sm btn-danger"
+                                  onClick={() => handleShowDeleteUser(user)}
+                                  disabled={loading || user.email === userName}
+                                >
+                                  Delete
+                                </button>
+                              </div>
+                            </td>
                           </tr>
                         ))
                       )}
@@ -429,6 +559,118 @@ const AdminDashboard = ({ userName }) => {
             </div>
           )}
         </>
+      )}
+      
+      {/* Edit User Modal */}
+      {showEditModal && (
+        <div className="modal fade show" style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Edit User</h5>
+                <button type="button" className="btn-close" onClick={handleCloseModal}></button>
+              </div>
+              <div className="modal-body">
+                <form onSubmit={handleSaveUser}>
+                  <div className="mb-3">
+                    <label htmlFor="editName" className="form-label">Name</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="editName"
+                      value={editName}
+                      onChange={(e) => setEditName(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label htmlFor="editEmail" className="form-label">Email</label>
+                    <input
+                      type="email"
+                      className="form-control"
+                      id="editEmail"
+                      value={editEmail}
+                      onChange={(e) => setEditEmail(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label htmlFor="editDepartment" className="form-label">Department</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="editDepartment"
+                      value={editDepartment}
+                      onChange={(e) => setEditDepartment(e.target.value)}
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label htmlFor="editRole" className="form-label">Role</label>
+                    <select
+                      className="form-select"
+                      id="editRole"
+                      value={editRole}
+                      onChange={(e) => setEditRole(e.target.value)}
+                      required
+                    >
+                      <option value="user">User</option>
+                      <option value="admin">Admin</option>
+                    </select>
+                  </div>
+                  <div className="modal-footer">
+                    <button type="button" className="btn btn-secondary" onClick={handleCloseModal}>Cancel</button>
+                    <button type="submit" className="btn btn-primary" disabled={loading}>
+                      {loading ? (
+                        <>
+                          <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                          Saving...
+                        </>
+                      ) : (
+                        "Save Changes"
+                      )}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Delete Confirmation Modal */}
+      {showDeleteConfirm && userToDelete && (
+        <div className="modal fade show" style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Confirm Delete</h5>
+                <button type="button" className="btn-close" onClick={handleCancelDelete}></button>
+              </div>
+              <div className="modal-body">
+                <p>Are you sure you want to delete the user: <strong>{userToDelete.name}</strong> ({userToDelete.email})?</p>
+                <p className="text-danger"><strong>This action cannot be undone.</strong></p>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" onClick={handleCancelDelete}>Cancel</button>
+                <button 
+                  type="button" 
+                  className="btn btn-danger" 
+                  onClick={handleConfirmDeleteUser}
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <>
+                      <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                      Deleting...
+                    </>
+                  ) : (
+                    "Delete User"
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
