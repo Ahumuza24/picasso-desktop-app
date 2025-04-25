@@ -106,20 +106,29 @@ func CreateDomainMapping(c *fiber.Ctx) error {
 
 // UpdateDomainMapping updates an existing domain mapping
 func UpdateDomainMapping(c *fiber.Ctx) error {
+	fmt.Println("Admin request - UpdateDomainMapping")
+
 	// Check if user is admin
 	if !utils.IsAdmin(c) {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error": "Unauthorized access",
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+			"error": "Admin access required",
 		})
 	}
 
+	// Log the raw body
+	fmt.Printf("UpdateDomainMapping raw body: %s\n", string(c.Body()))
+
 	// Parse request
-	var data map[string]string
+	var data map[string]interface{}
 	if err := c.BodyParser(&data); err != nil {
+		fmt.Printf("Error parsing domain mapping update body: %v\n", err)
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Failed to parse request body",
+			"error": "Failed to parse request body: " + err.Error(),
 		})
 	}
+
+	// Log the parsed data
+	fmt.Printf("UpdateDomainMapping parsed data: %+v\n", data)
 
 	// Validate input
 	id := c.Params("id")
@@ -138,33 +147,44 @@ func UpdateDomainMapping(c *fiber.Ctx) error {
 	}
 
 	// Update fields
-	if data["domain"] != "" {
-		mapping.Domain = normalizeDomain(data["domain"])
+	if data["domain"] != nil && data["domain"] != "" {
+		mapping.Domain = normalizeDomain(data["domain"].(string))
 	}
-	if data["drive_url"] != "" {
-		mapping.DriveURL = data["drive_url"]
+	if data["drive_url"] != nil && data["drive_url"] != "" {
+		mapping.DriveURL = data["drive_url"].(string)
 	}
-	if data["description"] != "" {
-		mapping.Description = data["description"]
+	if data["description"] != nil {
+		mapping.Description = data["description"].(string)
 	}
 
 	// Update timestamp and save
 	mapping.UpdatedAt = time.Now().Unix()
-	if err := database.DB.Save(&mapping).Error; err != nil {
+
+	result := database.DB.Save(&mapping)
+	if result.Error != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Failed to update domain mapping",
+			"error": "Failed to update domain mapping: " + result.Error.Error(),
 		})
 	}
 
-	return c.JSON(mapping)
+	// Check if any rows were affected
+	if result.RowsAffected == 0 {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "No changes were made to the domain mapping",
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(mapping)
 }
 
 // DeleteDomainMapping deletes a domain mapping
 func DeleteDomainMapping(c *fiber.Ctx) error {
+	fmt.Println("Admin request - DeleteDomainMapping")
+
 	// Check if user is admin
 	if !utils.IsAdmin(c) {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error": "Unauthorized access",
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+			"error": "Admin access required",
 		})
 	}
 
@@ -176,14 +196,30 @@ func DeleteDomainMapping(c *fiber.Ctx) error {
 		})
 	}
 
-	// Find and delete the mapping
-	if err := database.DB.Delete(&models.DomainMapping{}, id).Error; err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Failed to delete domain mapping",
+	// Verify the mapping exists first
+	var mapping models.DomainMapping
+	if err := database.DB.First(&mapping, id).Error; err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"error": "Domain mapping not found",
 		})
 	}
 
-	return c.JSON(fiber.Map{
+	// Delete the mapping
+	result := database.DB.Delete(&mapping)
+	if result.Error != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to delete domain mapping: " + result.Error.Error(),
+		})
+	}
+
+	// Check if any rows were affected
+	if result.RowsAffected == 0 {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "No domain mapping was deleted",
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "Domain mapping deleted successfully",
 	})
 }

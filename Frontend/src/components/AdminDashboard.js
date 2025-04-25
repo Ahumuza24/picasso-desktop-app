@@ -18,6 +18,13 @@ const AdminDashboard = ({ userName }) => {
   const [newDescription, setNewDescription] = useState("");
   const [editDefaultDriveUrl, setEditDefaultDriveUrl] = useState("");
   
+  // Domain edit states
+  const [showDomainEditModal, setShowDomainEditModal] = useState(false);
+  const [editingDomain, setEditingDomain] = useState(null);
+  const [editDomain, setEditDomain] = useState("");
+  const [editDriveUrl, setEditDriveUrl] = useState("");
+  const [editDescription, setEditDescription] = useState("");
+  
   // User edit states
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
@@ -219,6 +226,59 @@ const AdminDashboard = ({ userName }) => {
     } catch (err) {
       console.error("Error deleting domain mapping:", err);
       setError(err.message || "Failed to delete domain mapping");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Function to open edit domain modal
+  const handleEditDomain = (domain) => {
+    setEditingDomain(domain);
+    setEditDomain(domain.domain);
+    setEditDriveUrl(domain.drive_url);
+    setEditDescription(domain.description || "");
+    setShowDomainEditModal(true);
+  };
+
+  // Function to close domain edit modal
+  const handleCloseDomainModal = () => {
+    setShowDomainEditModal(false);
+    setEditingDomain(null);
+  };
+
+  // Function to save domain changes
+  const handleSaveDomain = async (e) => {
+    e.preventDefault();
+    
+    if (!editingDomain) return;
+    
+    try {
+      setLoading(true);
+      const response = await fetch(`http://localhost:8000/api/admin/domains/${editingDomain.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          domain: editDomain,
+          drive_url: editDriveUrl,
+          description: editDescription,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to update domain mapping");
+      }
+
+      // Close modal and refresh domains
+      setShowDomainEditModal(false);
+      await fetchDomains();
+      setError("");
+    } catch (err) {
+      console.error("Error updating domain mapping:", err);
+      setError(err.message || "Failed to update domain mapping");
     } finally {
       setLoading(false);
     }
@@ -452,6 +512,13 @@ const AdminDashboard = ({ userName }) => {
                             <td>{domain.description || "—"}</td>
                             <td>
                               <button
+                                className="btn btn-sm btn-primary me-2"
+                                onClick={() => handleEditDomain(domain)}
+                                disabled={loading}
+                              >
+                                Edit
+                              </button>
+                              <button
                                 className="btn btn-sm btn-danger"
                                 onClick={() => handleDeleteDomain(domain.id)}
                                 disabled={loading}
@@ -668,6 +735,78 @@ const AdminDashboard = ({ userName }) => {
                   )}
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Domain Edit Modal */}
+      {showDomainEditModal && (
+        <div className="modal show d-block" tabIndex="-1">
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Edit Domain Mapping</h5>
+                <button 
+                  type="button" 
+                  className="btn-close" 
+                  onClick={handleCloseDomainModal}
+                  disabled={loading}
+                ></button>
+              </div>
+              <form onSubmit={handleSaveDomain}>
+                <div className="modal-body">
+                  <div className="mb-3">
+                    <label htmlFor="editDomain" className="form-label">Domain</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="editDomain"
+                      value={editDomain}
+                      onChange={(e) => setEditDomain(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label htmlFor="editDriveUrl" className="form-label">Drive URL</label>
+                    <input
+                      type="url"
+                      className="form-control"
+                      id="editDriveUrl"
+                      value={editDriveUrl}
+                      onChange={(e) => setEditDriveUrl(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label htmlFor="editDescription" className="form-label">Description</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="editDescription"
+                      value={editDescription}
+                      onChange={(e) => setEditDescription(e.target.value)}
+                    />
+                  </div>
+                </div>
+                <div className="modal-footer">
+                  <button 
+                    type="button" 
+                    className="btn btn-secondary" 
+                    onClick={handleCloseDomainModal}
+                    disabled={loading}
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    type="submit" 
+                    className="btn btn-primary"
+                    disabled={loading}
+                  >
+                    Save Changes
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         </div>
