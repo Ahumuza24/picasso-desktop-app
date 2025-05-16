@@ -4,15 +4,6 @@
 // Check if we're running in a Tauri app
 export const isTauri = window.__TAURI__ !== undefined;
 
-// Initialize Tauri API if available
-let tauriApi = null;
-if (isTauri) {
-  const importTauri = async () => {
-    tauriApi = await import('@tauri-apps/api');
-  };
-  importTauri();
-}
-
 // Function to check if backend is running
 export async function checkBackendStatus() {
   if (!isTauri) return true; // If not in Tauri, assume backend is managed externally
