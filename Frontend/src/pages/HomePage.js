@@ -4,6 +4,7 @@ import AdminDashboard from "../components/AdminDashboard";
 import "../styles/brand-colors.css"; // Import brand colors
 import "../styles/no-scroll.css"; // Import no-scroll styles
 import logo from "../assets/Picasso Official logos-02.png"; // Import the logo
+import { API_BASE_URL } from "../App";
 
 const HomePage = ({ userName, userRole }) => {
   const [driveUrl, setDriveUrl] = useState("");
@@ -41,7 +42,7 @@ const HomePage = ({ userName, userRole }) => {
   const fetchDriveUrl = async () => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:8000/api/user/drive", {
+      const response = await fetch(`${API_BASE_URL}/api/user/drive`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

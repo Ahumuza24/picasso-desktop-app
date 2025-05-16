@@ -2,10 +2,11 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/brand-colors.css";
+import { API_BASE_URL } from "../App";
 
 const UserDashboard = ({ userName }) => {
   const [driveUrl, setDriveUrl] = useState("");
-  const [domain, setDomain] = useState("");
+  const [setDomain] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -14,7 +15,7 @@ const UserDashboard = ({ userName }) => {
     const fetchDriveUrl = async () => {
       try {
         setLoading(true);
-        const response = await fetch("http://localhost:8000/api/user/drive", {
+        const response = await fetch(`${API_BASE_URL}/api/user/drive`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

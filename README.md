@@ -1,4 +1,4 @@
-# Drive Mapper Application
+# Picasso Design Agency Application
 
 A desktop application that authenticates users, detects email domains, and redirects users to specific Google Drive folders based on domain mappings.
 
@@ -37,8 +37,8 @@ A desktop application that authenticates users, detects email domains, and redir
 
 1. Clone the repository:
    ```
-   git clone https://github.com/yourusername/drive-mapper.git
-   cd drive-mapper
+   git clone https://github.com/yourusername/picasso-design-agency.git
+   cd picasso-design-agency
    ```
 
 2. Set up the database:
@@ -98,7 +98,7 @@ UPDATE users SET role = 'admin' WHERE email = 'your-email@example.com';
 ### Backend
 ```
 cd Backend
-go build -o drive-mapper
+go build -o picasso-design-agency
 ```
 
 ### Frontend

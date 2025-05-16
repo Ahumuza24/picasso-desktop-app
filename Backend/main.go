@@ -3,6 +3,7 @@ package main
 import (
 	"JWT-Authentication-go/database"
 	"JWT-Authentication-go/routes"
+	"flag"
 	"log"
 
 	"github.com/gofiber/fiber/v2"
@@ -11,6 +12,11 @@ import (
 )
 
 func main() {
+	// Parse command line flags
+	port := flag.String("port", "8081", "Port to run the server on")
+	disableCors := flag.Bool("disable-cors", false, "Disable CORS (useful for desktop app)")
+	flag.Parse()
+
 	db, err := database.ConnectDB()
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
@@ -50,19 +56,45 @@ func main() {
 		TimeZone:   "Local",
 	}))
 
-	// Configure CORS to allow all origins when running as a desktop app
-	app.Use(cors.New(cors.Config{
-		AllowOrigins:     "*", // Allow all origins
-		AllowMethods:     "GET,POST,PUT,DELETE,OPTIONS",
-		AllowHeaders:     "Origin,Content-Type,Accept,Content-Length,Accept-Language,Accept-Encoding,Connection,Access-Control-Allow-Origin",
-		AllowCredentials: true,
-		MaxAge:           300,
-		ExposeHeaders:    "Set-Cookie",
-	}))
+	// Configure CORS
+	if !*disableCors {
+		log.Println("CORS enabled with specific origins")
+		app.Use(cors.New(cors.Config{
+			AllowOrigins:     "http://localhost:3000,http://localhost:1420,http://127.0.0.1:1420,http://127.0.0.1:8080,http://localhost:8080",
+			AllowHeaders:     "Origin, Content-Type, Accept, Authorization",
+			AllowMethods:     "GET, POST, PUT, DELETE",
+			AllowCredentials: true,
+		}))
+	} else {
+		// When CORS is disabled, set a simple header to allow all origins
+		log.Println("CORS disabled - running in desktop mode")
+		app.Use(func(c *fiber.Ctx) error {
+			c.Set("Access-Control-Allow-Origin", c.Get("Origin"))
+			c.Set("Access-Control-Allow-Credentials", "true")
+			c.Set("Access-Control-Allow-Headers", "Origin, Content-Type, Accept, Authorization")
+			c.Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
+
+			// Handle preflight OPTIONS request
+			if c.Method() == "OPTIONS" {
+				return c.SendStatus(fiber.StatusNoContent)
+			}
+
+			return c.Next()
+		})
+	}
+
+	// Add a health check endpoint
+	app.Get("/api/health", func(c *fiber.Ctx) error {
+		return c.JSON(fiber.Map{
+			"status":  "ok",
+			"message": "Server is running",
+		})
+	})
 
 	// Setup routes
 	routes.SetupRoutes(app)
 
-	// Start server on port 8000
-	log.Fatal(app.Listen(":8000"))
+	// Start server
+	log.Printf("Server started on port %s", *port)
+	log.Fatal(app.Listen(":" + *port))
 }

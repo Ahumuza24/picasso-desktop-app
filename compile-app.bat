@@ -1,5 +1,5 @@
 @echo off
-echo Building Drive Mapper Desktop App...
+echo Building Picasso Design Agency Desktop App...
 
 REM Build React frontend
 cd Frontend
@@ -12,4 +12,4 @@ echo Building Tauri desktop app...
 call npm run bundle
 
 echo Build complete!
-echo The Windows executable can be found in Frontend\src-tauri\target\release\drive-mapper.exe 
+echo The Windows executable can be found in Frontend\src-tauri\target\release\picasso-design-agency.exe 

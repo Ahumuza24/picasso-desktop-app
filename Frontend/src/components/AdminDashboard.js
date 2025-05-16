@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/brand-colors.css";
 import "./admin-dashboard.css";
+import { API_BASE_URL } from "../App";
 
 const AdminDashboard = ({ userName }) => {
   const [domains, setDomains] = useState([]);
@@ -68,7 +69,7 @@ const AdminDashboard = ({ userName }) => {
   }, []);
 
   const fetchDomains = async () => {
-    const response = await fetch("http://localhost:8000/api/admin/domains", {
+    const response = await fetch(`${API_BASE_URL}/api/admin/domains`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -89,7 +90,7 @@ const AdminDashboard = ({ userName }) => {
   };
 
   const fetchDefaultMapping = async () => {
-    const response = await fetch("http://localhost:8000/api/admin/default-mapping", {
+    const response = await fetch(`${API_BASE_URL}/api/admin/default-mapping`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -111,7 +112,7 @@ const AdminDashboard = ({ userName }) => {
   };
 
   const fetchUsers = async () => {
-    const response = await fetch("http://localhost:8000/api/admin/users", {
+    const response = await fetch(`${API_BASE_URL}/api/admin/users`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -135,7 +136,7 @@ const AdminDashboard = ({ userName }) => {
     e.preventDefault();
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:8000/api/admin/domains", {
+      const response = await fetch(`${API_BASE_URL}/api/admin/domains`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -173,7 +174,7 @@ const AdminDashboard = ({ userName }) => {
     e.preventDefault();
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:8000/api/admin/default-mapping", {
+      const response = await fetch(`${API_BASE_URL}/api/admin/default-mapping`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -207,7 +208,7 @@ const AdminDashboard = ({ userName }) => {
     
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:8000/api/admin/domains/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/admin/domains/${id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -254,7 +255,7 @@ const AdminDashboard = ({ userName }) => {
     
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:8000/api/admin/domains/${editingDomain.id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/admin/domains/${editingDomain.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -302,7 +303,7 @@ const AdminDashboard = ({ userName }) => {
     
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:8000/api/admin/users/${editingUser.id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/admin/users/${editingUser.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -357,7 +358,7 @@ const AdminDashboard = ({ userName }) => {
     
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:8000/api/admin/users/${userToDelete.id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/admin/users/${userToDelete.id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",

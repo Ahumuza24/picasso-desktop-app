@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/brand-colors.css";
+import { API_BASE_URL } from "../App";
 
 const ProfilePage = () => {
   const [user, setUser] = useState({
@@ -20,13 +21,13 @@ const ProfilePage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchUserProfile();
+fetchUserProfile();
   }, []);
 
   const fetchUserProfile = async () => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:8000/api/user", {
+      const response = await fetch(`${API_BASE_URL}/api/user`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -59,7 +60,7 @@ const ProfilePage = () => {
     e.preventDefault();
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:8000/api/user/profile", {
+      const response = await fetch(`${API_BASE_URL}/api/user/profile`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

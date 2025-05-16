@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import "./navbar-fixed.css";
 import "../styles/brand-colors.css"; // Import brand colors
 import logo from "../assets/Picasso white.png"; // Import the logo
+import { API_BASE_URL } from "../App";
 
 function Navbar({ userName, userRole }) {
   const navigate = useNavigate();
@@ -27,7 +28,7 @@ function Navbar({ userName, userRole }) {
   
   const logout = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/api/logout`, {
+      const response = await fetch(`${API_BASE_URL}/api/logout`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

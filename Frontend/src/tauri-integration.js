@@ -4,13 +4,18 @@
 // Check if we're running in a Tauri app
 export const isTauri = window.__TAURI__ !== undefined;
 
-// Initialize Tauri API if available
-let tauriApi = null;
-if (isTauri) {
-  const importTauri = async () => {
-    tauriApi = await import('@tauri-apps/api');
-  };
-  importTauri();
+// Store the current backend URL
+let currentBackendUrl = process.env.REACT_APP_API_URL || "http://localhost:8081";
+
+// Function to get the current backend URL
+export function getBackendUrl() {
+  return currentBackendUrl;
+}
+
+// Function to set the backend URL
+export function setBackendUrl(url) {
+  currentBackendUrl = url;
+  console.log(`Backend URL set to: ${currentBackendUrl}`);
 }
 
 // Function to check if backend is running
@@ -32,8 +37,36 @@ export async function startBackend() {
   
   try {
     const { invoke } = await import('@tauri-apps/api');
-    await invoke('start_backend');
-    return true;
+    const result = await invoke('start_backend');
+    console.log('Backend start result:', result);
+    
+    // Try to find which port the backend is running on
+    const ports = [8081, 8080, 8000, 3000];
+    for (const port of ports) {
+      const healthUrl = `http://localhost:${port}/api/health`;
+      try {
+        const response = await fetch(healthUrl, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+          signal: AbortSignal.timeout(2000)
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          if (data.status === 'ok') {
+            const newUrl = `http://localhost:${port}`;
+            setBackendUrl(newUrl);
+            console.log(`Backend is running at: ${newUrl}`);
+            return true;
+          }
+        }
+      } catch (e) {
+        console.log(`Port ${port} not available:`, e.message);
+      }
+    }
+    
+    console.error('Failed to detect running backend on any port');
+    return false;
   } catch (error) {
     console.error('Failed to start backend:', error);
     return false;
@@ -85,4 +118,41 @@ export async function openExternalUrl(url) {
     console.error('Failed to open URL:', error);
     window.open(url, '_blank'); // Fallback to browser
   }
+}
+
+// Function to try multiple ports when connecting to backend
+export const tryMultiplePorts = async (basePath = '/api/health', ports = [8081, 8080, 8000, 3000]) => {
+  console.log(`Trying to connect to backend on multiple ports...`);
+  
+  for (const port of ports) {
+    const baseUrl = `http://localhost:${port}`;
+    const url = `${baseUrl}${basePath}`;
+    console.log(`Attempting connection to: ${url}`);
+    
+    try {
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache',
+          'Expires': '0'
+        },
+        credentials: 'include',
+        signal: AbortSignal.timeout(2000) // 2 second timeout per attempt
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        console.log(`Successfully connected to backend at: ${baseUrl}`, data);
+        setBackendUrl(baseUrl);
+        return { success: true, port, url: baseUrl };
+      }
+    } catch (error) {
+      console.log(`Failed to connect to ${url}: ${error.message}`);
+    }
+  }
+  
+  return { success: false };
 } 

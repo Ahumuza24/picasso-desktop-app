@@ -1,5 +1,5 @@
 {
-  "name": "drive-mapper",
+  "name": "picasso-design-agency",
   "version": "1.0.0",
   "private": true,
   "dependencies": {
@@ -42,6 +42,6 @@
     ]
   },
   "devDependencies": {
-    "@tauri-apps/cli": "^1.6.3"
+    "@tauri-apps/cli": "^1.5.11"
   }
 }

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/brand-colors.css"; // Import brand colors
+import { API_BASE_URL } from "../App";
 
 const ChangePasswordPage = () => {
   const [currentPassword, setCurrentPassword] = useState("");
@@ -29,7 +30,7 @@ const ChangePasswordPage = () => {
     
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:8000/api/user/profile", {
+      const response = await fetch(`${API_BASE_URL}/api/user/profile`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

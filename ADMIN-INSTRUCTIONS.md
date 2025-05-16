@@ -1,6 +1,6 @@
 # Admin User Creation Guide
 
-There are three ways to create an admin user in the Drive Mapper application:
+There are three ways to create an admin user in the Picasso Design Agency application:
 
 ## 1. Using the Admin Web Interface
 
