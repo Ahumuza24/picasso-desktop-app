@@ -50,9 +50,9 @@ func main() {
 		TimeZone:   "Local",
 	}))
 
-	// Configure CORS with specific origin
+	// Configure CORS to allow all origins when running as a desktop app
 	app.Use(cors.New(cors.Config{
-		AllowOrigins:     "http://localhost:3000", // Specific React frontend origin
+		AllowOrigins:     "*", // Allow all origins
 		AllowMethods:     "GET,POST,PUT,DELETE,OPTIONS",
 		AllowHeaders:     "Origin,Content-Type,Accept,Content-Length,Accept-Language,Accept-Encoding,Connection,Access-Control-Allow-Origin",
 		AllowCredentials: true,

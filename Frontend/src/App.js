@@ -11,17 +11,44 @@ import AdminDashboard from "./components/AdminDashboard";
 import Navbar from "./components/Navbar";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./styles/brand-colors.css"; // Import brand colors
+import { checkBackendStatus, startBackend, showMessage } from "./tauri-integration";
+
+// Base URL for API requests
+const API_BASE_URL = "http://localhost:8000";
 
 // Wrapper component to use location
 function AppContent() {
   const [userName, setUserName] = useState("");
   const [userRole, setUserRole] = useState("");
+  const [backendReady, setBackendReady] = useState(false);
   const location = useLocation();
+
+  // Initialize backend connection
+  useEffect(() => {
+    const initBackend = async () => {
+      const isRunning = await checkBackendStatus();
+      if (!isRunning) {
+        try {
+          await startBackend();
+          setBackendReady(true);
+        } catch (error) {
+          console.error("Failed to start backend:", error);
+          showMessage("Error", "Failed to start the backend server. Please restart the application.", "error");
+        }
+      } else {
+        setBackendReady(true);
+      }
+    };
+
+    initBackend();
+  }, []);
 
   useEffect(() => {
     const fetchUserData = async () => {
+      if (!backendReady) return;
+
       try {
-        const response = await fetch(`http://localhost:8000/api/user`, {
+        const response = await fetch(`${API_BASE_URL}/api/user`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -30,14 +57,7 @@ function AppContent() {
         });
         const responseData = await response.json();
         if (response.ok) {
-          console.log(
-            "Received User Data",
-            responseData,
-            "name",
-            responseData.name,
-            "role",
-            responseData.role
-          );
+          console.log("Received User Data", responseData);
           setUserName(responseData.name);
           setUserRole(responseData.role || "user");
         } else {
@@ -53,19 +73,26 @@ function AppContent() {
     };
 
     fetchUserData();
-  }, [location.pathname]); // Re-fetch when route changes
+  }, [location.pathname, backendReady]); // Re-fetch when route changes or backend becomes ready
 
   return (
     <div>
       <Navbar userName={userName} userRole={userRole} />
-      <Routes>
-        <Route path="/" element={<HomePage userName={userName} userRole={userRole} />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/change-password" element={<ChangePasswordPage />} />
-        <Route path="/admin" element={<AdminDashboard userName={userName} />} />
-      </Routes>
+      {!backendReady ? (
+        <div className="container mt-5 text-center">
+          <h2>Starting application...</h2>
+          <p>Please wait while the application initializes.</p>
+        </div>
+      ) : (
+        <Routes>
+          <Route path="/" element={<HomePage userName={userName} userRole={userRole} />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/change-password" element={<ChangePasswordPage />} />
+          <Route path="/admin" element={<AdminDashboard userName={userName} />} />
+        </Routes>
+      )}
     </div>
   );
 }
