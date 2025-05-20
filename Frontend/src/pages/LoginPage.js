@@ -1,12 +1,11 @@
 // src/pages/LoginPage.js
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import SignIn from "../components/SignIn";
 import { Navigate } from "react-router-dom";
-import "../styles/no-scroll.css";
-import { BackendContext } from "../App";
+import "../styles/no-scroll.css"; // Import no-scroll styles
+import { API_BASE_URL } from "../App";
 
 const LoginPage = () => {
-  const { backendUrl } = useContext(BackendContext);
   const [responseMessage, setResponseMessage] = useState("");
   const [redirect, setRedirect] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -33,7 +32,7 @@ const LoginPage = () => {
     
     try {
       // Login request
-      const response = await fetch(`${backendUrl}/api/login`, {
+      const response = await fetch(`${API_BASE_URL}/api/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -53,7 +52,7 @@ const LoginPage = () => {
         
         // After successful login, fetch user data to check role
         try {
-          const userResponse = await fetch(`${backendUrl}/api/user`, {
+          const userResponse = await fetch(`${API_BASE_URL}/api/user`, {
             method: "GET",
             headers: {
               "Content-Type": "application/json",

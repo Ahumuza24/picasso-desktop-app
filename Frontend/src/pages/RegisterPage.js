@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import SignUp from "../components/SignUp";
-import "../styles/no-scroll.css";
-import { BackendContext } from "../App";
+import "../styles/no-scroll.css"; // Import no-scroll styles
+import { API_BASE_URL } from "../App";
 
 const RegisterPage = () => {
-  const { backendUrl } = useContext(BackendContext);
   const [responseMessage, setResponseMessage] = useState("");
   const [redirect, setRedirect] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -30,7 +29,7 @@ const RegisterPage = () => {
     console.log("Submitting user data:", userData);
     setIsLoading(true);
     try {
-      const response = await fetch(`${backendUrl}/api/register`, {
+      const response = await fetch(`${API_BASE_URL}/api/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
