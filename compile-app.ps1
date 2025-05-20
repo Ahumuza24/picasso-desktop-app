@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 Write-Host "Building Picasso Design Agency Desktop App Installer..." -ForegroundColor Green
+=======
+Write-Host "Building Drive Mapper Desktop App Installer..." -ForegroundColor Green
+>>>>>>> 017013b20ea16f949b61af9d328fd5e2d8acb663
 
 # Compile the Go backend
 Set-Location -Path Backend
@@ -59,7 +63,11 @@ if (-not (Test-Path "src-tauri/icons/dialog.png")) {
 
 # Copy backend executable to the resources directory
 Write-Host "Including backend executable in resources..." -ForegroundColor Yellow
+<<<<<<< HEAD
 Copy-Item -Path "..\Backend\picasso-design-agency-backend.exe" -Destination "src-tauri\resources\picasso-design-agency-backend.exe" -Force
+=======
+Copy-Item -Path "..\Backend\drive-mapper-backend.exe" -Destination "src-tauri\resources\drive-mapper-backend.exe" -Force
+>>>>>>> 017013b20ea16f949b61af9d328fd5e2d8acb663
 if (-not $?) {
     Write-Host "Failed to copy backend executable to resources!" -ForegroundColor Red
     exit 1
