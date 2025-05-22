@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: picasso-frontend
+    env: node
+    buildCommand: npm install && npm run build
+    startCommand: serve -s build
+    envVars:
+      - key: REACT_APP_API_URL
+        value: https://picasso-backend.onrender.com
+    autoDeploy: true 

@@ -60,7 +60,7 @@ func main() {
 	if !*disableCors {
 		log.Println("CORS enabled with specific origins")
 		app.Use(cors.New(cors.Config{
-			AllowOrigins:     "http://localhost:3000,http://localhost:1420,http://127.0.0.1:1420,http://127.0.0.1:8080,http://localhost:8080",
+			AllowOrigins:     "http://localhost:3000,http://localhost:1420,http://127.0.0.1:1420,http://127.0.0.1:8080,http://localhost:8080,https://picasso-frontend.onrender.com",
 			AllowHeaders:     "Origin, Content-Type, Accept, Authorization",
 			AllowMethods:     "GET, POST, PUT, DELETE",
 			AllowCredentials: true,
